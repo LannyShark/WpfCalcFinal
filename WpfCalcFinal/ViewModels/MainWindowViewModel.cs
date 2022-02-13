@@ -42,15 +42,16 @@ namespace WpfCalcFinal.ViewModels
         }
 
         public ICommand ClickOnButton { get; }
-        private void OnAddCommandExecute(object p)
+        private void OnClickOnButtonExecute(object p)
         {
-            switch (/*текст на кнопке*/)
+            switch (p as string)
             {
                 case "=":
                     TxtBox1 += TxtBox2;
-                    TxtBox2 = new DataTable().Compute(TxtBox1,null).ToString();
+                    TxtBox2 = new DataTable().Compute(TxtBox1, null).ToString().Replace(',','.');
+                    TxtBox1 = "";
                     break;
-                case "С":
+                case "C":
                     TxtBox1 = "";
                     TxtBox2 = "";
                     break;
@@ -58,39 +59,38 @@ namespace WpfCalcFinal.ViewModels
                     TxtBox2 = "";
                     break;
                 case "←":
-                    TxtBox2.Remove(TxtBox2.Length, 1);
+                    TxtBox2 = TxtBox2.Remove(TxtBox2.Length - 1, 1);
                     break;
                 case "+/-":
-                    TxtBox1 += "(-"+TxtBox2+")";
-                    TxtBox2 = "";
+                    TxtBox2 = "-" + TxtBox2;
                     break;
                 case "%":
-                    double pool = (double) new DataTable().Compute(TxtBox1.Remove(TxtBox1.Length, 1), null);
-                    TxtBox1 = pool.ToString() + TxtBox1.Remove(0, (TxtBox1.Length - 1)) + (pool* Convert.ToDouble(TxtBox2)/100).ToString();
+                    double pool = Convert.ToDouble(new DataTable().Compute(TxtBox1.Remove(TxtBox1.Length-1, 1), null));
+                    TxtBox1 = pool.ToString() + TxtBox1.Remove(0, (TxtBox1.Length - 1)) + (pool * Convert.ToDouble(TxtBox2) / 100).ToString();
                     TxtBox2 = "";
                     break;
                 case "x²":
-                    TxtBox2 = Math.Pow(Convert.ToDouble(TxtBox2),2).ToString();
+                    TxtBox2 = Math.Pow(Convert.ToDouble(TxtBox2), 2).ToString();
                     break;
                 case "√x":
                     TxtBox2 = Math.Sqrt(Convert.ToDouble(TxtBox2)).ToString();
                     break;
                 default:
-                    if (/*текст на кнопке == цифра или точка*/)
+                    if (p as string == "1" || p as string == "2" || p as string == "3" || p as string == "4" || p as string == "5" || p as string == "6" || p as string == "7" || p as string == "8" || p as string == "9" || p as string == "0" || p as string == ".")
                     {
-                        TxtBox2 += /*цифра или точка*/;
+                        TxtBox2 += p as string;
                     }
-                    else if (/*текст на кнопке == +,-,/,* */)
+                    else if (p as string == "+" || p as string == "-" || p as string == "*" || p as string == "/")
                     {
-                        TxtBox1 += TxtBox2 /*+ текст на кнопке*/;
+                        TxtBox1 += TxtBox2 + p as string;
                         TxtBox2 = "";
                     }
                     break;
             }
         }
-        private bool CanAddCommandExecute(object p)
+        private bool CanClickOnButtonExecute(object p)
         {
-            if (/*текст на кнопке == цифра||*/ TxtBox2 != "")
+            if (p as string == "1" || p as string == "2" || p as string == "3" || p as string == "4" || p as string == "5" || p as string == "6" || p as string == "7" || p as string == "8" || p as string == "9" || p as string == "0" || p as string == "." || TxtBox2 != "")
             {
                 return true;
             }
@@ -98,7 +98,9 @@ namespace WpfCalcFinal.ViewModels
         }
         public MainWindowViewModel()
         {
-            ClickOnButton = new RelayCommand(OnAddCommandExecute, CanAddCommandExecute);
+            TxtBox1 = "";
+            TxtBox2 = "";
+            ClickOnButton = new RelayCommand(OnClickOnButtonExecute, CanClickOnButtonExecute);
         }
     }
 }
