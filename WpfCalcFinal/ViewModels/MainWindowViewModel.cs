@@ -65,7 +65,8 @@ namespace WpfCalcFinal.ViewModels
                     TxtBox2 = "";
                     break;
                 case "%":
-                    TxtBox1 = /*высчитываем значение доя последнего симовола*/ + /*последний символ*/ + /*значение доя последнего симовола * TxtBox2/100 */;
+                    double pool = (double) new DataTable().Compute(TxtBox1.Remove(TxtBox1.Length, 1), null);
+                    TxtBox1 = pool.ToString() + TxtBox1.Remove(0, (TxtBox1.Length - 1)) + (pool* Convert.ToDouble(TxtBox2)/100).ToString();
                     TxtBox2 = "";
                     break;
                 case "x²":
